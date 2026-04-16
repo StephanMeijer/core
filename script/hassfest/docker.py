@@ -147,15 +147,15 @@ RUN --mount=type=tmpfs,target=/tmp \
     # Required for PyTurboJPEG
     apk add --no-cache libturbojpeg \
     # Install uv at the version pinned in the requirements file
-    && pip install --no-cache-dir "uv==$(awk -F'==' '/^uv==/{{print $2}}' /usr/src/homeassistant/requirements.txt)" \
+    && pip install --no-cache-dir "uv==$(awk -F'==' '/^uv==/{{v=$2; found=1}} END{{if(!found){{print "uv not found in requirements.txt" > "/dev/stderr"; exit 1}} print v}}' /usr/src/homeassistant/requirements.txt)" \
     && uv pip install \
         --no-build \
         --no-cache \
         -c /usr/src/homeassistant/homeassistant/package_constraints.txt \
         -r /usr/src/homeassistant/requirements.txt \
-        "pipdeptree==$(awk -F'==' '/^pipdeptree==/{{print $2}}' /tmp/requirements_test.txt)" \
-        "tqdm==$(awk -F'==' '/^tqdm==/{{print $2}}' /tmp/requirements_test.txt)" \
-        "ruff==$(awk -F'==' '/^ruff==/{{print $2}}' /tmp/requirements_test_pre_commit.txt)"
+        "pipdeptree==$(awk -F'==' '/^pipdeptree==/{{v=$2; found=1}} END{{if(!found){{print "pipdeptree not found in requirements_test.txt" > "/dev/stderr"; exit 1}} print v}}' /tmp/requirements_test.txt)" \
+        "tqdm==$(awk -F'==' '/^tqdm==/{{v=$2; found=1}} END{{if(!found){{print "tqdm not found in requirements_test.txt" > "/dev/stderr"; exit 1}} print v}}' /tmp/requirements_test.txt)" \
+        "ruff==$(awk -F'==' '/^ruff==/{{v=$2; found=1}} END{{if(!found){{print "ruff not found in requirements_test_pre_commit.txt" > "/dev/stderr"; exit 1}} print v}}' /tmp/requirements_test_pre_commit.txt)"
 
 LABEL "name"="hassfest"
 LABEL "maintainer"="Home Assistant <hello@home-assistant.io>"
